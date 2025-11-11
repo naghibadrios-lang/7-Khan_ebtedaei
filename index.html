@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="fa">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>هفت‌خان واژه‌ها</title>
+<style>
+  body {
+    font-family: 'Vazir', sans-serif;
+    direction: rtl;
+    text-align: center;
+    background: linear-gradient(180deg, #001f3f, #003366);
+    color: white;
+    margin: 0;
+    padding: 0;
+  }
+
+  h1 {
+    background-color: #ffcc00;
+    color: #222;
+    padding: 10px;
+    border-radius: 10px;
+    margin: 15px;
+  }
+
+  #game {
+    max-width: 600px;
+    margin: auto;
+    background: rgba(255,255,255,0.1);
+    padding: 20px;
+    border-radius: 20px;
+    box-shadow: 0 0 15px rgba(255,255,255,0.3);
+  }
+
+  button {
+    display: block;
+    width: 90%;
+    margin: 10px auto;
+    padding: 12px;
+    border: none;
+    border-radius: 10px;
+    font-size: 18px;
+    background-color: #0066cc;
+    color: white;
+    cursor: pointer;
+    transition: 0.3s;
+  }
+
+  button:hover {
+    background-color: #0055aa;
+  }
+
+  .correct {
+    background-color: green !important;
+  }
+
+  .wrong {
+    background-color: red !important;
+  }
+
+  #status {
+    margin-top: 15px;
+    font-size: 18px;
+  }
+
+</style>
+</head>
+<body>
+
+<h1>🎮 هفت‌خان واژه‌ها</h1>
+<div id="game">
+  <h2 id="stageTitle">خان ۱</h2>
+  <div id="question"></div>
+  <div id="options"></div>
+  <div id="status"></div>
+</div>
+
+<script>
+const questions = [
+  // 🏔️ خان ۱
+  [
+    {word: "خان", options: ["پادشاه", "مرحله", "پهلوان", "ثروت"], correct: "مرحله"},
+    {word: "دستگاه", options: ["قدرت، ثروت", "اتاق", "وسیله", "خانه"], correct: "قدرت، ثروت"},
+    {word: "می درد", options: ["می‌نوشد", "پاره می‌کند", "می‌رقصد", "می‌خوابد"], correct: "پاره می‌کند"},
+    {word: "جهان", options: ["نام یک پهلوان ایرانی", "دنیا", "کوه", "اژدها"], correct: "نام یک پهلوان ایرانی"},
+    {word: "نهاد", options: ["گذاشت", "برد", "خواند", "گفت"], correct: "گذاشت"}
+  ],
+  // 🗻 خان ۲
+  [
+    {word: "اهریمنی", options: ["خوب", "شیطانی", "قوی", "شاد"], correct: "شیطانی"},
+    {word: "نبرد", options: ["دوستی", "جنگ، پیکار", "مسابقه", "آرامش"], correct: "جنگ، پیکار"},
+    {word: "دیوان", options: ["شاعر", "دیوها", "کتاب", "مردان"], correct: "دیوها"},
+    {word: "بند", options: ["طناب، اسارت", "قید", "گره", "جایگاه"], correct: "طناب، اسارت"},
+    {word: "رخش", options: ["اسب رستم", "دوست رستم", "پهلوان", "کوه"], correct: "اسب رستم"}
+  ],
+  // 🐉 خان ۳
+  [
+    {word: "بیم", options: ["ترس", "دوستی", "خشم", "قدرت"], correct: "ترس"},
+    {word: "تاخت", options: ["دوید", "حمله کرد", "پرید", "رفت"], correct: "حمله کرد"},
+    {word: "نخجیر", options: ["شکار", "اسب", "غار", "پادشاه"], correct: "شکار"},
+    {word: "کمند", options: ["طناب، ریسمان", "زره", "دستبند", "تیر"], correct: "طناب، ریسمان"},
+    {word: "گردی", options: ["پهلوانی", "کوهی", "بزرگی", "گرد"], correct: "پهلوانی"}
+  ],
+  // 🔥 خان ۴
+  [
+    {word: "زابلستان", options: ["سرزمین ایران و افغانستان", "کوهستان", "دریا", "شهر"], correct: "سرزمین ایران و افغانستان"},
+    {word: "آذرگشسب", options: ["آتش سوزان", "نام دیو", "پهلوان", "اسب"], correct: "آتش سوزان"},
+    {word: "کیکاووس", options: ["پادشاه ایرانی", "جنگجو", "دیو", "شاعر"], correct: "پادشاه ایرانی"},
+    {word: "چیره", options: ["پیروز", "ضعیف", "شاد", "جوان"], correct: "پیروز"},
+    {word: "نیرنگ", options: ["فریب", "دوستی", "قدرت", "خشم"], correct: "فریب"}
+  ],
+  // ⚔️ خان ۵
+  [
+    {word: "کوفتن", options: ["کوبیدن", "خوردن", "گفتن", "نواختن"], correct: "کوبیدن"},
+    {word: "اژدها", options: ["مار بزرگ", "اسب", "کوه", "غار"], correct: "مار بزرگ"},
+    {word: "پرخاش می‌کند", options: ["عصبانی می‌شود", "می‌خندد", "می‌خوابد", "می‌دود"], correct: "عصبانی می‌شود"},
+    {word: "چاک چاک", options: ["پاره پاره", "تمیز", "ساده", "زیبا"], correct: "پاره پاره"},
+    {word: "تیغ", options: ["شمشیر", "سپر", "تیر", "چاقو"], correct: "شمشیر"}
+  ],
+  // 🛡️ خان ۶
+  [
+    {word: "به تنگ می‌آید", options: ["بی‌طاقت می‌شود", "شاد می‌شود", "می‌خوابد", "می‌خندد"], correct: "بی‌طاقت می‌شود"},
+    {word: "سهمگین", options: ["ترسناک", "زیبا", "خوشحال", "آرام"], correct: "ترسناک"},
+    {word: "سپاس", options: ["شکرگزاری می‌کند", "می‌خوابد", "می‌خندد", "می‌ترسد"], correct: "شکرگزاری می‌کند"},
+    {word: "قصد", options: ["منظور", "حرکت", "حمله", "استراحت"], correct: "منظور"},
+    {word: "یال", options: ["موی گردن اسب", "شاخ", "دست", "پا"], correct: "موی گردن اسب"}
+  ],
+  // 👑 خان ۷
+  [
+    {word: "به کردار", options: ["مانند", "ضد", "پشت", "زیر"], correct: "مانند"},
+    {word: "پشت سر گذاشتن", options: ["سپری کردن", "نادیده گرفتن", "رها کردن", "یادآوری کردن"], correct: "سپری کردن"},
+    {word: "داور", options: ["قاضی", "پادشاه", "سرباز", "دشمن"], correct: "قاضی"},
+    {word: "دادگر", options: ["عادل", "ظالم", "شاد", "بزرگ"], correct: "عادل"},
+    {word: "ز", options: ["مخفف از", "مخفف با", "مخفف تا", "مخفف در"], correct: "مخفف از"}
+  ]
+];
+
+let stage = 0;
+let questionIndex = 0;
+let lives = 3;
+
+const stageTitle = document.getElementById('stageTitle');
+const questionDiv = document.getElementById('question');
+const optionsDiv = document.getElementById('options');
+const statusDiv = document.getElementById('status');
+
+function loadQuestion() {
+  const q = questions[stage][questionIndex];
+  questionDiv.innerHTML = `<h3>🗡️ واژه: ${q.word}</h3>`;
+  optionsDiv.innerHTML = '';
+  q.options.forEach(opt => {
+    const btn = document.createElement('button');
+    btn.textContent = opt;
+    btn.onclick = () => checkAnswer(btn, q.correct);
+    optionsDiv.appendChild(btn);
+  });
+  statusDiv.innerHTML = `❤️ جان‌ها: ${lives}`;
+}
+
+function checkAnswer(button, correct) {
+  if (button.textContent === correct) {
+    button.classList.add('correct');
+    setTimeout(() => nextQuestion(), 500);
+  } else {
+    button.classList.add('wrong');
+    lives--;
+    if (lives <= 0) {
+      statusDiv.innerHTML = "😞 بازی تمام شد! دوباره تلاش کن.";
+      questionDiv.innerHTML = "";
+      optionsDiv.innerHTML = `<button onclick="restartGame()">شروع دوباره</button>`;
+    } else {
+      statusDiv.innerHTML = `❤️ جان‌ها: ${lives}`;
+    }
+  }
+}
+
+function nextQuestion() {
+  questionIndex++;
+  if (questionIndex >= questions[stage].length) {
+    stage++;
+    if (stage >= questions.length) {
+      questionDiv.innerHTML = "🏆 آفرین! تو مانند رستم از هفت‌خان گذشتی!";
+      optionsDiv.innerHTML = "";
+      statusDiv.innerHTML = "";
+    } else {
+      questionIndex = 0;
+      alert(`مرحله ${stage} با موفقیت گذشت!`);
+      stageTitle.textContent = `خان ${stage + 1}`;
+      loadQuestion();
+    }
+  } else {
+    loadQuestion();
+  }
+}
+
+function restartGame() {
+  stage = 0;
+  questionIndex = 0;
+  lives = 3;
+  stageTitle.textContent = "خان ۱";
+  loadQuestion();
+}
+
+loadQuestion();
+</script>
+
+</body>
+</html>
